@@ -2,8 +2,8 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser')
 const mongodb = require('./config/mongo.db');
-const recipes = require('./api/recipes');
-const shopping = require('./api/shopping-list');
+const event = require('./api/event');
+const player = require('./api/player');
 const config = require('./config/env/env');
 const app = express();
 
@@ -35,8 +35,8 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use('/api', recipes);
-app.use('/api', shopping);
+app.use('/api', event);
+app.use('/api', player);
 
 app.use('*', function (req, res) {
     res.status(400);
