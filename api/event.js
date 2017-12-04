@@ -28,15 +28,25 @@ routes.get('/event/:id', (req,res) => {
 });
 
 routes.post('/event', (req,res) => {
-    let event  = new Event(req.body);
+
+    let body = req.body;
+    let event  = new Event({
+        pokemonName: body.pokemonName,
+        gym: {
+            gymName: body.gymName,
+            gymColor: body.gymColor
+        },
+        time: body.time
+        }
+    );
     event.pastDate = Date.now();
 
     event.save()
         .then((event) => {
             res.status(200).json(event);
         })
-        .catch(() => {
-            res.status(400).json({'error':'error in post event'})
+        .catch((error) => {
+            res.status(400).json(error)
         });
 });
 
