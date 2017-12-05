@@ -4,8 +4,10 @@ const Event = require('../model/event.model');
 const mongodb = require('../config/mongo.db');
 
 routes.get('/event', (req,res) => {
+
     Event.find()
         .populate('player')
+        .sort('-pastDate')
         .then((events) => {
         res.status(200).json(events);
         })
