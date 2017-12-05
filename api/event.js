@@ -52,13 +52,23 @@ routes.post('/event', (req,res) => {
 
 routes.put('/event/:id', (req,res) => {
     let id = req.params.id;
-    let event = req.body;
+    let body = req.body;
+    let event  = {
+            pokemonName: body.pokemonName,
+            gym: {
+                gymName: body.gymName,
+                gymColor: body.gymColor
+            },
+            time: body.time
+        }
+    ;
 
-    Event.findByIdAndUpdate(id, event)
+    Event.findOneAndUpdate({_id: id}, event)
         .then((event) => {
             res.status(200).json(event);
         })
-        .catch(() => {
+        .catch((error) => {
+            console.log(error)
             res.status(400).json({'error':'error in put event'})
         });
 });
