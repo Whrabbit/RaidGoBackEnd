@@ -10,7 +10,7 @@ const EventSchema = new Schema({
     },
     gym: [GymSchema],
     time: {
-        type: String,
+        type: Date,
         required: true
     },
     pastDate: {

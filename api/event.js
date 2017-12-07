@@ -30,7 +30,7 @@ routes.get('/event/:id', (req,res) => {
 });
 
 routes.post('/event', (req,res) => {
-
+    console.log(req.body)
     let body = req.body;
     let event  = new Event({
         pokemonName: body.pokemonName,
@@ -79,8 +79,8 @@ routes.delete('/event/:id', (req,res) => {
     let id = req.params.id;
 
     Event.findOneAndRemove({_id: id})
-        .then(() => {
-            res.status(200).json();
+        .then((event) => {
+            res.status(200).json(event);
         })
         .catch(() => {
             res.status(400).json({'error':'error in delete event'})
