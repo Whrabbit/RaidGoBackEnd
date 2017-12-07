@@ -1,9 +1,9 @@
 const neo4j = require('neo4j-driver').v1;
 
 const neo = {
-    uri: 'bolt://hobby-fombiclecffdgbkeemblpial.dbs.graphenedb.com:24786',
+    uri: 'bolt://hobby-ilfijjnckhclgbkehogmpial.dbs.graphenedb.com:24786',
     username: 'admin',
-    password: 'b.EElh3VqwOSiP.gXiD9H3gtLuKa9MJ'
+    password: 'b.9li1e3wFG7MB.QSJGuhtIT8ueUhy1'
 };
 const driver = neo4j.driver(
     neo.uri,
