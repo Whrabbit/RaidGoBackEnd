@@ -3,11 +3,11 @@ const routes = express.Router();
 const Player = require('../model/player.model');
 const session = require('../config/neo4j.db');
 
-routes.get('/player', (req,res) => {
-    let player = session.run(
+routes.get('/user', (req,res) => {
+    let user = session.run(
         'MATCH (user: User) return user'
     );
-    player
+    user
         .then((result) => {
             session.close();
             res.status(200).json(result);
@@ -17,7 +17,7 @@ routes.get('/player', (req,res) => {
         });
 });
 
-routes.get('/player/:id', (req,res) => {
+routes.get('/user/:id', (req,res) => {
     let id = req.params.id;
     let query = session.run(
         'match (n:User) where ID(n) = ' + id +' return n',
@@ -25,60 +25,60 @@ routes.get('/player/:id', (req,res) => {
     );
 
     query
-        .then((player) => {
+        .then((user) => {
             session.close();
-            res.status(200).json(player);
+            res.status(200).json(user);
         })
         .catch((error) => {
             res.status(400).json(error)
         });
 });
 
-routes.post('/player', (req,res) => {
-    let player = req.body;
+routes.post('/user', (req,res) => {
+    let user = req.body;
     let query = session.run(
         'CREATE (n:User {username: $username, password: $password, level: $level, gymColor: $gymColor}) RETURN n',
-        {username: player.username,
-        password: player.password,
-        level: player.level,
-        gymColor: player.gymColor}
+        {username: user.username,
+        password: user.password,
+        level: user.level,
+        gymColor: user.gymColor}
     );
 
     query
-        .then((player) => {
+        .then((user) => {
             session.close();
-            res.status(200).json(player);
+            res.status(200).json(user);
         })
         .catch((error) => {
             res.status(400).json({error})
         });
 });
 
-routes.put('/player/:id', (req,res) => {
+routes.put('/user/:id', (req,res) => {
     let id = req.params.id;
-    let player = req.body;
+    let user = req.body;
     let query = session.run(
         'MATCH (n:User)' +
         ' WHERE ID(n) = ' + id +
         ' SET n.username = $username, n.password = $password, n.level = $level, n.gymColor = $gymColor' +
         ' RETURN n',
-        {username: player.username,
-            password: player.password,
-            level: player.level,
-            gymColor: player.gymColor}
+        {username: user.username,
+            password: user.password,
+            level: user.level,
+            gymColor: user.gymColor}
     );
 
     query
-        .then((player) => {
+        .then((user) => {
             session.close();
-            res.status(200).json(player);
+            res.status(200).json(user);
         })
         .catch((error) => {
             res.status(400).json({error})
         });
 });
 
-routes.delete('/player/:id', (req,res) => {
+routes.delete('/user/:id', (req,res) => {
     let id = req.params.id;
     let query = session.run(
         'MATCH (n:User)' +
