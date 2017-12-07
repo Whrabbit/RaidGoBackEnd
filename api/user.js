@@ -13,6 +13,7 @@ routes.get('/user', (req,res) => {
             res.status(200).json(result);
         })
         .catch((error) => {
+            session.close();
             res.status(400).json({error})
         });
 });
@@ -30,6 +31,7 @@ routes.get('/user/:id', (req,res) => {
             res.status(200).json(user);
         })
         .catch((error) => {
+            session.close();
             res.status(400).json(error)
         });
 });
@@ -50,7 +52,32 @@ routes.post('/user', (req,res) => {
             res.status(200).json(user);
         })
         .catch((error) => {
+            session.close();
             res.status(400).json({error})
+        });
+});
+
+routes.post('/login', (req,res) => {
+    let user = req.body;
+    let query = session.run(
+        'MATCH (n:User {username: $username, password: $password}) RETURN n',
+        {username: user.username,
+            password: user.password}
+    );
+
+    query
+        .then((user) => {
+            session.close();
+            if (user.records[0] !== undefined){
+                res.status(200).json(user);
+            }else{
+                res.status(401).json({})
+            }
+
+        })
+        .catch(() => {
+            session.close();
+            res.status(400).json({})
         });
 });
 
@@ -74,6 +101,7 @@ routes.put('/user/:id', (req,res) => {
             res.status(200).json(user);
         })
         .catch((error) => {
+            session.close();
             res.status(400).json({error})
         });
 });
@@ -91,6 +119,7 @@ routes.delete('/user/:id', (req,res) => {
             res.status(200).json();
         })
         .catch((error) => {
+            session.close();
             res.status(400).json(error)
         });
 });
