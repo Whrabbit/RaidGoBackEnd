@@ -2,7 +2,7 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const event = require('./api/event');
-const player = require('./api/player');
+const user = require('./api/player');
 const config = require('./config/env/env');
 const app = express();
 
@@ -35,7 +35,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/api', event);
-app.use('/api', player);
+app.use('/api', user);
 
 app.use('*', function (req, res) {
     res.status(400);
