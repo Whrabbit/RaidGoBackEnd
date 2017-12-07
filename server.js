@@ -16,7 +16,7 @@ app.use(bodyParser.json({
     type: 'application/vnd.api+json'
 }));
 
-app.set('port', (process.env.PORT || config.env.webPort));
+app.set('port', (process.env.PORT || 3040));
 app.set('env', (process.env.ENV || 'development'));
 
 
