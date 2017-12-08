@@ -14,7 +14,7 @@ routes.get('/user', (req,res) => {
         })
         .catch((error) => {
             session.close();
-            res.status(400).json({error})
+            res.status(400).json(error);
         });
 });
 
@@ -32,7 +32,7 @@ routes.get('/user/:id', (req,res) => {
         })
         .catch((error) => {
             session.close();
-            res.status(400).json(error)
+            res.status(400).json(error);
         });
 });
 
@@ -53,7 +53,7 @@ routes.post('/user', (req,res) => {
         })
         .catch((error) => {
             session.close();
-            res.status(400).json({error})
+            res.status(400).json(error);
         });
 });
 
@@ -67,17 +67,17 @@ routes.post('/login', (req,res) => {
 
     query
         .then((user) => {
-            session.close();
-            if (user.records[0] !== undefined){
-                res.status(200).json(user);
-            }else{
-                res.status(401).json({})
-            }
 
+            if (user.records[0] !== undefined){
+                res.status(200).json({"authentication" : true});
+            }else{
+                res.status(200).json({"authentication" : false});
+            }
+            session.close();
         })
         .catch(() => {
             session.close();
-            res.status(400).json({})
+            res.status(400).json({});
         });
 });
 
@@ -102,7 +102,7 @@ routes.put('/user/:id', (req,res) => {
         })
         .catch((error) => {
             session.close();
-            res.status(400).json({error})
+            res.status(400).json(error);
         });
 });
 
@@ -120,7 +120,7 @@ routes.delete('/user/:id', (req,res) => {
         })
         .catch((error) => {
             session.close();
-            res.status(400).json(error)
+            res.status(400).json(error);
         });
 });
 
