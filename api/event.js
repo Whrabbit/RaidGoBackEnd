@@ -70,13 +70,6 @@ routes.put('/event/rp/:eventId', (req,res) => {
     let event = req.body.event;
     let playerId = req.body.playerId;
 
-    // for(let i = 0; event.player.length; i++){
-    //     if(event.player[i] == playerId){
-    //         event.player.r
-    //         break;
-    //     }
-    // }
-
     event.player.splice(event.player.indexOf(playerId), 1);
 
     Event.findOneAndUpdate({_id: eventId}, event)

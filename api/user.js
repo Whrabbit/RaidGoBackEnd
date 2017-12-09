@@ -28,7 +28,13 @@ routes.get('/user/:id', (req,res) => {
     query
         .then((user) => {
             session.close();
-            res.status(200).json(user);
+            res.status(200).json({
+                    username: user.records[0]._fields[0].properties.username,
+                    password: user.records[0]._fields[0].properties.password,
+                    level: user.records[0]._fields[0].properties.level,
+                    gymColor: user.records[0]._fields[0].properties.gymColor,
+                    id: user.records[0]._fields[0].identity.low
+            });
         })
         .catch((error) => {
             session.close();
