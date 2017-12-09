@@ -6,13 +6,12 @@ const mongodb = require('../config/mongo.db');
 routes.get('/event', (req,res) => {
 
     Event.find()
-        .populate('player')
         .sort('-pastDate')
         .then((events) => {
         res.status(200).json(events);
         })
-        .catch(() => {
-        res.status(400).json({'error':'error in get events'})
+        .catch((error) => {
+            res.status(400).json(error)
         });
 });
 
@@ -20,17 +19,15 @@ routes.get('/event/:id', (req,res) => {
     let id = req.params.id;
 
     Event.findOne({_id: id})
-        .populate('player')
         .then((event) => {
             res.status(200).json(event);
         })
-        .catch(() => {
-            res.status(400).json({'error':'error in get event by id'})
+        .catch((error) => {
+            res.status(400).json(error)
         });
 });
 
 routes.post('/event', (req,res) => {
-    console.log(req.body)
     let body = req.body;
     let event  = new Event({
         pokemonName: body.pokemonName,
@@ -38,14 +35,53 @@ routes.post('/event', (req,res) => {
             gymName: body.gymName,
             gymColor: body.gymColor
         },
-        time: body.time
-        }
-    );
+        time: body.time,
+        player: []
+        });
     event.pastDate = Date.now();
 
     event.save()
         .then((event) => {
             res.status(200).json(event);
+        })
+        .catch((error) => {
+            res.status(400).json(error)
+        });
+});
+
+routes.post('/event/:eventId', (req,res) => {
+    let eventId = req.params.eventId;
+    let event = req.body.event;
+    let playerId = req.body.playerId;
+
+    event.player.push(playerId);
+
+    Event.findOneAndUpdate({_id: eventId}, event)
+        .then((result) => {
+            res.status(200).json(result)
+        })
+        .catch((error) => {
+            res.status(400).json(error)
+        });
+});
+
+routes.put('/event/rp/:eventId', (req,res) => {
+    let eventId = req.params.eventId;
+    let event = req.body.event;
+    let playerId = req.body.playerId;
+
+    // for(let i = 0; event.player.length; i++){
+    //     if(event.player[i] == playerId){
+    //         event.player.r
+    //         break;
+    //     }
+    // }
+
+    event.player.splice(event.player.indexOf(playerId), 1);
+
+    Event.findOneAndUpdate({_id: eventId}, event)
+        .then((result) => {
+            res.status(200).json(result)
         })
         .catch((error) => {
             res.status(400).json(error)
@@ -62,16 +98,14 @@ routes.put('/event/:id', (req,res) => {
                 gymColor: body.gymColor
             },
             time: body.time
-        }
-    ;
+        };
 
     Event.findOneAndUpdate({_id: id}, event)
         .then((event) => {
             res.status(200).json(event);
         })
         .catch((error) => {
-            console.log(error)
-            res.status(400).json({'error':'error in put event'})
+            res.status(400).json(error)
         });
 });
 
@@ -82,8 +116,8 @@ routes.delete('/event/:id', (req,res) => {
         .then((event) => {
             res.status(200).json(event);
         })
-        .catch(() => {
-            res.status(400).json({'error':'error in delete event'})
+        .catch((error) => {
+            res.status(400).json(error)
         });
 });
 

@@ -69,7 +69,14 @@ routes.post('/login', (req,res) => {
         .then((user) => {
 
             if (user.records[0] !== undefined){
-                res.status(200).json({"authentication" : true});
+                res.status(200).json({
+                    "authentication" : true,
+                    "user":{
+                        username: user.records[0]._fields[0].properties.username,
+                        level: user.records[0]._fields[0].properties.level,
+                        id: user.records[0]._fields[0].identity.low
+                    }
+                });
             }else{
                 res.status(200).json({"authentication" : false});
             }

@@ -18,8 +18,7 @@ const EventSchema = new Schema({
         required: true
     },
     player: [{
-        type: Schema.Types.ObjectId,
-        ref: 'player'
+        type: String,
     }]
 });
 const Event = mongoose.model('event', EventSchema);
