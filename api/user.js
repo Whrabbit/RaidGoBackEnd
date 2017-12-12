@@ -44,9 +44,10 @@ routes.get('/user/:id', (req,res) => {
 
 routes.post('/user', (req,res) => {
     let user = req.body;
+
     let query = session.run(
         'CREATE (n:User {username: $username, password: $password, level: $level, gymColor: $gymColor}) RETURN n',
-        {username: user.username,
+        {username: user.username.toLowerCase(),
         password: user.password,
         level: user.level,
         gymColor: user.gymColor}
@@ -67,7 +68,7 @@ routes.post('/login', (req,res) => {
     let user = req.body;
     let query = session.run(
         'MATCH (n:User {username: $username, password: $password}) RETURN n',
-        {username: user.username,
+        {username: user.username.toLowerCase(),
             password: user.password}
     );
 
