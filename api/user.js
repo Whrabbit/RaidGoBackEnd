@@ -75,7 +75,7 @@ routes.post('/user', (req, res) => {
                         res.status(400).json(error);
                     });
             } else {
-                res.status(400).json({error: 'user already exists'});
+                res.status(200).json({error: 'user already exists'});
             }
         })
 
