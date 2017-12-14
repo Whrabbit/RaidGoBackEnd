@@ -3,9 +3,9 @@ const routes = express.Router();
 const Player = require('../model/player.model');
 const session = require('../config/neo4j.db');
 
-routes.get('/user', (req,res) => {
+routes.get('/user', (req, res) => {
     let user = session.run(
-        'MATCH (user: User) return user'
+        'MATCH (user: User) RETURN user'
     );
     user
         .then((result) => {
@@ -18,10 +18,10 @@ routes.get('/user', (req,res) => {
         });
 });
 
-routes.get('/user/:id', (req,res) => {
+routes.get('/user/:id', (req, res) => {
     let id = req.params.id;
     let query = session.run(
-        'match (n:User) where ID(n) = ' + id +' return n',
+        'MATCH (n:User) WHERE ID(n) = ' + id + ' RETURN n',
         {id: id}
     );
 
@@ -29,11 +29,11 @@ routes.get('/user/:id', (req,res) => {
         .then((user) => {
             session.close();
             res.status(200).json({
-                    username: user.records[0]._fields[0].properties.username,
-                    password: user.records[0]._fields[0].properties.password,
-                    level: user.records[0]._fields[0].properties.level,
-                    gymColor: user.records[0]._fields[0].properties.gymColor,
-                    id: user.records[0]._fields[0].identity.low
+                username: user.records[0]._fields[0].properties.username,
+                password: user.records[0]._fields[0].properties.password,
+                level: user.records[0]._fields[0].properties.level,
+                gymColor: user.records[0]._fields[0].properties.gymColor,
+                id: user.records[0]._fields[0].identity.low
             });
         })
         .catch((error) => {
@@ -42,50 +42,70 @@ routes.get('/user/:id', (req,res) => {
         });
 });
 
-routes.post('/user', (req,res) => {
+routes.post('/user', (req, res) => {
     let user = req.body;
 
-    let query = session.run(
-        'CREATE (n:User {username: $username, password: $password, level: $level, gymColor: $gymColor}) RETURN n',
-        {username: user.username.toLowerCase(),
-        password: user.password,
-        level: user.level,
-        gymColor: user.gymColor}
+    let usernameExist = session.run(
+        'match(n:User{username: $username})' +
+        'return n'
+        , {username: user.username}
     );
 
-    query
-        .then((user) => {
-            session.close();
-            res.status(200).json(user);
+    usernameExist
+        .then((result) => {
+            if (result.records.length === 0) {
+                let query = session.run(
+                    'CREATE (node:User {username: $username, password: $password, level: $level, gymColor: $gymColor})' +
+                    ' RETURN node',
+                    {
+                        username: user.username.toLowerCase(),
+                        password: user.password,
+                        level: user.level,
+                        gymColor: user.gymColor
+                    }
+                );
+
+                query
+                    .then((user) => {
+                        session.close();
+                        res.status(200).json(user);
+                    })
+                    .catch((error) => {
+                        session.close();
+                        res.status(400).json(error);
+                    });
+            } else {
+                res.status(400).json({error: 'user already exists'});
+            }
         })
-        .catch((error) => {
-            session.close();
-            res.status(400).json(error);
-        });
+
+
 });
 
-routes.post('/login', (req,res) => {
+routes.post('/login', (req, res) => {
     let user = req.body;
     let query = session.run(
         'MATCH (n:User {username: $username, password: $password}) RETURN n',
-        {username: user.username.toLowerCase(),
-            password: user.password}
+        {
+            username: user.username.toLowerCase(),
+            password: user.password
+        }
     );
 
     query
         .then((user) => {
 
-            if (user.records[0] !== undefined){
+            if (user.records[0] !== undefined) {
                 res.status(200).json({
-                    "authentication" : true,
-                    "user":{
+                    "authentication": true,
+                    "user": {
                         username: user.records[0]._fields[0].properties.username,
                         level: user.records[0]._fields[0].properties.level,
                         id: user.records[0]._fields[0].identity.low
                     }
                 });
-            }else{
-                res.status(200).json({"authentication" : false});
+            } else {
+                res.status(200).json({"authentication": false});
             }
             session.close();
         })
@@ -95,7 +115,7 @@ routes.post('/login', (req,res) => {
         });
 });
 
-routes.put('/user/:id', (req,res) => {
+routes.put('/user/:id', (req, res) => {
     let id = req.params.id;
     let user = req.body;
     let query = session.run(
@@ -103,10 +123,12 @@ routes.put('/user/:id', (req,res) => {
         ' WHERE ID(n) = ' + id +
         ' SET n.username = $username, n.password = $password, n.level = $level, n.gymColor = $gymColor' +
         ' RETURN n',
-        {username: user.username,
+        {
+            username: user.username,
             password: user.password,
             level: user.level,
-            gymColor: user.gymColor}
+            gymColor: user.gymColor
+        }
     );
 
     query
@@ -120,7 +142,7 @@ routes.put('/user/:id', (req,res) => {
         });
 });
 
-routes.delete('/user/:id', (req,res) => {
+routes.delete('/user/:id', (req, res) => {
     let id = req.params.id;
     let query = session.run(
         'MATCH (n:User)' +
