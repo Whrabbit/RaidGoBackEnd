@@ -5,7 +5,7 @@ var env = {
     dbUser: process.env.DB_USER || 'Whrabbit',
     dbPassword: process.env.DB_PASSWORD || 'test123',
     dbDatabase: process.env.DB_DATABASE || 'raidgo',
-    dbMongo: '@ds129386.mlab.com:29386/raidgo'
+    dbMongo: 'ds129386.mlab.com:29386/raidgo'
 }
 
 var dburl = process.env.NODE_ENV === 'production' ?
